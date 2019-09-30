@@ -1,0 +1,25 @@
+architecture: amd64
+creation_date: ${CREATION_TIMESTAMP}
+properties:
+  architecture: amd64
+  description: AntiZapret VPN amd64 ${CREATION_HUMAN}
+  name: antizapret-vpn-amd64-${CREATION_HUMAN}
+  os: debian
+  release: buster
+  serial: "${CREATION_HUMAN}"
+  variant: default
+templates:
+  /etc/hostname:
+    when:
+    - create
+    - copy
+    create_only: false
+    template: hostname.tpl
+    properties: {}
+  /etc/hosts:
+    when:
+    - create
+    - copy
+    create_only: false
+    template: hosts.tpl
+    properties: {}

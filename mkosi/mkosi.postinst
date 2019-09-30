@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+export DEBIAN_FRONTEND=noninteractive
+export APT_LISTCHANGES_FRONTEND=none
+
+# debootstrap does not use these repositories by default.
+# Add them manually and update the system to make sure all the packets are up-to-date
+echo 'deb http://deb.debian.org/debian buster-updates main' >> /etc/apt/sources.list
+echo 'deb http://security.debian.org/debian-security buster/updates main' >> /etc/apt/sources.list
+
+# Add knot-resolver CZ.NIC repository. It's newer and less buggy than in Debian repos.
+cd /tmp
+curl https://secure.nic.cz/files/knot-resolver/knot-resolver-release.deb -o knot-resolver-release.deb
+dpkg -i knot-resolver-release.deb
+apt update
+apt -o Dpkg::Options::="--force-confold" -y full-upgrade
+
+# Clean package cache and remove the lists
+apt clean
+rm /var/lib/apt/lists/* || true
+
+# systemd-nspawn, which is used in mkosi, will by default mount (or copy?)
+# host resolv.conf. We don't need that.
+umount /etc/resolv.conf || true
+echo nameserver 127.0.0.1 > /etc/resolv.conf

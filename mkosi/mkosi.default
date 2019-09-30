@@ -1,0 +1,27 @@
+# Antizapret VPN system container
+
+[Distribution]
+Distribution=debian
+Release=buster
+
+[Output]
+#Format=directory
+Format=tar
+Output=rootfs.tar.xz
+
+[Validation]
+CheckSum=true
+Sign=true
+# ProstoVPN PGP key ID
+Key=7135A006B28E1285
+
+[Packages]
+WithNetwork=true
+Packages=bash python3-dnslib ipcalc gawk idn iptables ferm
+         openvpn knot-resolver
+         ifupdown isc-dhcp-client inetutils-ping
+         curl wget ca-certificates openssl
+         host dnsutils
+         bsdmainutils procps
+         unattended-upgrades
+         nano vim-tiny

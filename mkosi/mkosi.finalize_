@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+HERE="$(dirname "$(readlink -f "${0}")")"
+cd "$HERE"
+
+render() {
+    local IFS=''
+    local File="$1"
+    while read -r line ; do
+        while [[ "$line" =~ (\$\{[a-zA-Z_][a-zA-Z_0-9]*\}) ]] ; do
+        local LHS=${BASH_REMATCH[1]}
+        local RHS="$(eval echo "\"$LHS\"")"
+        line=${line//$LHS/$RHS}
+        done
+        echo "$line"
+    done < $File
+}
+
+CREATION_TIMESTAMP="$(date +%s)"
+CREATION_HUMAN="$(date +%Y%m%d_%H:%M)"
+#TEMPDIR="$(mktemp -d --tmpdir)"
+#[[ ! "$TEMPDIR" ]] && echo "Tempdir creation fail!" && exit 1
+#render "extra/lxd/metadata.yaml" > "$TEMPDIR/metadata.yaml"
+#cp -r "extra/lxd/templates/" "$TEMPDIR/"
+#(cd "$TEMPDIR" && tar --xz --numeric-owner -cf metadata.tar.xz metadata.yaml templates)
+#mv "$TEMPDIR/metadata.tar.xz" "mkosi.output/"
+#rm -r "$TEMPDIR"
+
+# Creating LXD image directory, copy all the needed files and build the image
+mkdir "mkosi.output/lxd"
+render "extra/lxd/metadata.yaml" > "mkosi.output/lxd/metadata.yaml"
+cp -r "extra/lxd/templates/" "mkosi.output/lxd/"
+(cd "mkosi.output/lxd/" && mkdir "rootfs" && cd "rootfs" && tar axf ../../rootfs.tar.xz)
+(cd "mkosi.output/lxd/" && tar --xz --numeric-owner -cf lxd.tar.xz "rootfs" "metadata.yaml" "templates")
+rm -r "mkosi.output/lxd/rootfs" "mkosi.output/lxd/metadata.yaml" "mkosi.output/lxd/templates"
+chmod 777 mkosi.output/lxd/
