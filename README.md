@@ -84,3 +84,7 @@ sudo lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-clie
 * OpenNIC (`.bbs, .chan, .cyb, .geek, .pirate` и другие);
 * EmerDNS (`.lib, .emc, .coin, .bazar`);
 * Namecoin (`.bit`).
+
+## Техническая поддержка
+
+Техническая поддержка осуществляется на форуме NTC Community: https://ntc.party/c/antizapret-prostovpn-org
