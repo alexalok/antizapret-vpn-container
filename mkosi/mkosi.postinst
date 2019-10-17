@@ -23,3 +23,6 @@ rm /var/lib/apt/lists/* || true
 # host resolv.conf. We don't need that.
 umount /etc/resolv.conf || true
 echo nameserver 127.0.0.1 > /etc/resolv.conf
+
+# Run all needed service on boot
+systemctl enable systemd-networkd
