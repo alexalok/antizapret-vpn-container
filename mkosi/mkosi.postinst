@@ -25,4 +25,8 @@ umount /etc/resolv.conf || true
 echo nameserver 127.0.0.1 > /etc/resolv.conf
 
 # Run all needed service on boot
-systemctl enable systemd-networkd
+systemctl enable systemd-networkd \
+                 kresd@1 \
+                 antizapret-update.service antizapret-update.timer \
+                 dnsmap openvpn-generate-keys \
+                 openvpn-server@antizapret openvpn-server@antizapret-tcp
