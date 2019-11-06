@@ -1,6 +1,7 @@
 [Unit]
 Description=antizapret-vpn update
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 WorkingDirectory=/root/antizapret
