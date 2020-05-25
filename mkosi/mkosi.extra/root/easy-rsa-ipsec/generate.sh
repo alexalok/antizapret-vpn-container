@@ -4,7 +4,20 @@ HERE="$(dirname "$(readlink -f "${0}")")"
 cd "$HERE/easyrsa3"
 
 export EASYRSA_CERT_EXPIRE=3650
-SERVER="$(curl -4 icanhazip.com)"
+
+set +e
+
+SERVER=""
+for i in 1 2 3 4 5;
+do
+    SERVER="$(curl -s -4 icanhazip.com)"
+    [[ "$?" == "0" ]] && break
+    sleep 2
+done
+[[ ! "$SERVER" ]] && echo "Can't determine global IP address!" && exit 8
+
+set -e
+
 
 render() {
     local IFS=''
