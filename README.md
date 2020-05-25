@@ -14,23 +14,28 @@ AntiZapret VPN Container
 * Личный сервер или VPS с виртуализацией XEN или KVM (OpenVZ не подойдёт), с выделенным IPv4-адресом, минимум 384 МБ оперативной памяти и 700 МБ свободного места;
 * Любой современный дистрибутив Linux, где доступен LXD или systemd-machined (рекомендуется Ubuntu 18.04 LTS, Ubuntu 20.04 LTS);
 
+**Рекомендуемые протестированные хостинг-провайдеры**: [ITLDC](https://itldc.com/?from=51099) (сервер SSD VDS 1G за €3.49).  
+*Ссылки реферальные. При покупке сервера по ссылкам выше, часть оплаченной суммы пойдёт на содержание серверов АнтиЗапрета.*
+
 
 ## Установка с помощью LXD:
 
-Сперва установите и настройте LXD (произведите `lxd init`), затем выполните следующие команды:
+Сперва установите и настройте LXD (произведите `lxd init`), затем выполните следующие команды от root (с sudo):
 
 ```
-sudo lxc image import https://antizapret.prostovpn.org/container-images/az-vpn --alias antizapret-vpn-img
-sudo lxc init antizapret-vpn-img antizapret-vpn
-sudo lxc config device add antizapret-vpn proxy_1194 proxy listen=tcp:[::]:1194 connect=tcp:127.0.0.1:1194
-sudo lxc start antizapret-vpn
+lxc image import https://antizapret.prostovpn.org/container-images/az-vpn --alias antizapret-vpn-img
+lxc init antizapret-vpn-img antizapret-vpn
+lxc config device add antizapret-vpn proxy_1194 proxy listen=tcp:[::]:1194 connect=tcp:127.0.0.1:1194
+lxc start antizapret-vpn
 sleep 10
-sudo lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn antizapret-client-tcp.ovpn
+lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn antizapret-client-tcp.ovpn
 ```
 
 Протестировано на Ubuntu 20.04.
 
 ## Установка с помощью systemd-machined:
+
+Выполните следующие команды от root (с sudo):
 
 ```
 gpg --no-default-keyring --keyring /etc/systemd/import-pubring.gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys 0xEF2E2223D08B38D4B51FFB9E7135A006B28E1285
