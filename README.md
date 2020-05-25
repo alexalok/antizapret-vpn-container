@@ -12,7 +12,7 @@ AntiZapret VPN Container
 **Вам потребуется:**
 
 * Личный сервер или VPS с виртуализацией XEN или KVM (OpenVZ не подойдёт), с выделенным IPv4-адресом, минимум 384 МБ оперативной памяти и 700 МБ свободного места;
-* Любой современный дистрибутив Linux, где доступен LXD или systemd-machined (рекомендуется Ubuntu 18.04 LTS);
+* Любой современный дистрибутив Linux, где доступен LXD или systemd-machined (рекомендуется Ubuntu 18.04 LTS, Ubuntu 20.04 LTS);
 
 
 ## Установка с помощью LXD:
@@ -27,6 +27,28 @@ sudo lxc start antizapret-vpn
 sleep 10
 sudo lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn antizapret-client-tcp.ovpn
 ```
+
+Протестировано на Ubuntu 20.04.
+
+## Установка с помощью systemd-machined:
+
+```
+gpg --no-default-keyring --keyring /etc/systemd/import-pubring.gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys 0xEF2E2223D08B38D4B51FFB9E7135A006B28E1285
+
+machinectl pull-tar https://antizapret.prostovpn.org/container-images/az-vpn/rootfs.tar.xz antizapret-vpn
+mkdir -p /etc/systemd/nspawn/
+echo -e "[Network]\nVirtualEthernet=yes\nPort=tcp:1194:1194\nPort=udp:1194:1194" > /etc/systemd/nspawn/antizapret-vpn.nspawn
+
+systemctl enable --now systemd-networkd.service
+machinectl enable antizapret-vpn
+machinectl start antizapret-vpn
+sleep 10
+machinectl copy-from antizapret-vpn /root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn antizapret-client-tcp.ovpn
+```
+
+Протестировано на Ubuntu 20.04.
+
+### После установки
 
 После выполнения команд, скопируйте файл `antizapret-client-tcp.ovpn` с сервера на ваш компьютер, с помощью программы FileZilla (Windows, macOS, Linux) или WinSCP (только для Windows), по протоколу **SFTP**.  
 Это ваш конфигурационный файл OpenVPN, который нужно импортировать в программу OpenVPN на компьютере и OpenVPN Connect на Android и iOS.
