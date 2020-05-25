@@ -17,11 +17,26 @@ Key=7135A006B28E1285
 
 [Packages]
 WithNetwork=true
-Packages=bash python3-dnslib ipcalc gawk idn iptables ferm
-         openvpn knot-resolver
+Packages=bash
+         python3-dnslib
+         ipcalc
+         sipcalc
+         gawk
+         idn
+         iptables
+         ferm
+         openvpn
+         knot-resolver
          inetutils-ping
-         curl wget ca-certificates openssl
-         host dnsutils
-         bsdmainutils procps
+         curl
+         wget
+         ca-certificates
+         openssl
+         host
+         dnsutils
+         bsdmainutils
+         procps
          unattended-upgrades
-         nano vim-tiny
+         nano
+         vim-tiny
+         git
