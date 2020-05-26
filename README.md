@@ -14,11 +14,13 @@ AntiZapret VPN Container
 * Личный сервер или VPS с виртуализацией XEN или KVM (OpenVZ не подойдёт), с выделенным IPv4-адресом, минимум 384 МБ оперативной памяти и 700 МБ свободного места;
 * Любой современный дистрибутив Linux, где доступен LXD или systemd-machined (рекомендуется Ubuntu 18.04 LTS, Ubuntu 20.04 LTS);
 
-**Рекомендуемые протестированные хостинг-провайдеры**: [ITLDC](https://itldc.com/?from=51099) (сервер SSD VDS 1G за €3.49).  
-*Ссылки реферальные. При покупке сервера по ссылкам выше, часть оплаченной суммы пойдёт на содержание серверов АнтиЗапрета.*
+**Рекомендуемые протестированные хостинг-провайдеры**: [ITLDC](https://itldc.com/?from=51099) (сервер SSD VDS 1G за €3.49), [Scaleway](https://www.scaleway.com/en/) (сервер DEV1-S за €2.99).  
+*Часть ссылок — реферальные. При покупке сервера по реферальным ссылкам выше, часть оплаченной суммы пойдёт на содержание серверов АнтиЗапрета.*
 
 
-## Установка с помощью LXD:
+## Установка на собственный сервер
+
+### С помощью LXD
 
 Сперва установите и настройте LXD (произведите `lxd init`), затем выполните следующие команды от root (с sudo):
 
@@ -33,7 +35,7 @@ lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tc
 
 Протестировано на Ubuntu 20.04.
 
-## Установка с помощью systemd-machined:
+### С помощью systemd-machined
 
 Выполните следующие команды от root (с sudo):
 
@@ -53,7 +55,33 @@ machinectl copy-from antizapret-vpn /root/easy-rsa-ipsec/CLIENT_KEY/antizapret-c
 
 Протестировано на Ubuntu 20.04.
 
-### После установки
+### Установка на Scaleway с помощью cloud-init
+
+При создании нового сервера (instance) у хостера Scaleway, после пункта #5 (Enter a Name and Optional Tags) нажмите на кнопку "Advanced Options", активируйте "Cloud-init", скопируйте и вставьте следующий скрипт:
+
+```
+#!/bin/bash
+export DEBIAN_FRONTEND=noninteractive
+export APT_LISTCHANGES_FRONTEND=none
+apt -y install systemd-container dirmngr
+mkdir -p /root/.gnupg/
+gpg --no-default-keyring --keyring /etc/systemd/import-pubring.gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys 0xEF2E2223D08B38D4B51FFB9E7135A006B28E1285
+
+machinectl pull-tar https://antizapret.prostovpn.org/container-images/az-vpn/rootfs.tar.xz antizapret-vpn
+mkdir -p /etc/systemd/nspawn/
+echo -e "[Network]\nVirtualEthernet=yes\nPort=tcp:1194:1194\nPort=udp:1194:1194" > /etc/systemd/nspawn/antizapret-vpn.nspawn
+
+systemctl enable --now systemd-networkd.service
+machinectl enable antizapret-vpn
+machinectl start antizapret-vpn
+sleep 10
+machinectl copy-from antizapret-vpn /root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn /root/antizapret-client-tcp.ovpn
+```
+
+По завершении создания сервера у вас уже будет установлен АнтиЗапрет.
+
+
+## После установки
 
 После выполнения команд, скопируйте файл `antizapret-client-tcp.ovpn` с сервера на ваш компьютер, с помощью программы FileZilla (Windows, macOS, Linux) или WinSCP (только для Windows), по протоколу **SFTP**.  
 Это ваш конфигурационный файл OpenVPN, который нужно импортировать в программу OpenVPN на компьютере и OpenVPN Connect на Android и iOS.
