@@ -14,7 +14,7 @@ AntiZapret VPN Container
 * Личный сервер или VPS с виртуализацией XEN или KVM (OpenVZ не подойдёт), с выделенным IPv4-адресом, минимум 384 МБ оперативной памяти и 700 МБ свободного места;
 * Любой современный дистрибутив Linux, где доступен LXD или systemd-machined (рекомендуется Ubuntu 18.04 LTS, Ubuntu 20.04 LTS);
 
-**Рекомендуемые протестированные хостинг-провайдеры**: [ITLDC](https://itldc.com/?from=51099) (сервер SSD VDS 1G за €3.49), [Scaleway](https://www.scaleway.com/en/) (сервер DEV1-S за €2.99).  
+**Рекомендуемые протестированные хостинг-провайдеры**: [ITLDC](https://itldc.com/?from=51099) (сервер SSD VDS 1G за €3.49), [Vultr](https://www.vultr.com/?ref=8592407-6G) (серверы за $3.5 и $5, при регистрации по ссылке даётся бонус на первый месяц), [Scaleway](https://www.scaleway.com/en/) (сервер DEV1-S за €2.99).  
 *Часть ссылок — реферальные. При покупке сервера по реферальным ссылкам выше, часть оплаченной суммы пойдёт на содержание серверов АнтиЗапрета.*
 
 
@@ -55,14 +55,17 @@ machinectl copy-from antizapret-vpn /root/easy-rsa-ipsec/CLIENT_KEY/antizapret-c
 
 Протестировано на Ubuntu 20.04.
 
-### Установка на Scaleway с помощью cloud-init
+### Установка на Vultr и Scaleway (с помощью cloud-init)
 
-При создании нового сервера (instance) у хостера Scaleway, после пункта #5 (Enter a Name and Optional Tags) нажмите на кнопку "Advanced Options", активируйте "Cloud-init", скопируйте и вставьте следующий скрипт:
+**Scaleway**: при создании нового сервера (instance) выберите ОС Ubuntu 20.04, после пункта #5 (Enter a Name and Optional Tags) нажмите на кнопку "Advanced Options", активируйте "Cloud-init", скопируйте и вставьте скрипт ниже.
+
+**Vultr**: при создании нового сервера выберите ОС Ubuntu 20.04, в пункте Startup Script создайте новый скрипт кнопкой Add New убедитесь, что тип скрипта — Boot, скопируйте и вставьте скрипт ниже.
 
 ```
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 export APT_LISTCHANGES_FRONTEND=none
+apt update
 apt -y install systemd-container dirmngr
 mkdir -p /root/.gnupg/
 gpg --no-default-keyring --keyring /etc/systemd/import-pubring.gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys 0xEF2E2223D08B38D4B51FFB9E7135A006B28E1285
@@ -74,7 +77,7 @@ echo -e "[Network]\nVirtualEthernet=yes\nPort=tcp:1194:1194\nPort=udp:1194:1194"
 systemctl enable --now systemd-networkd.service
 machinectl enable antizapret-vpn
 machinectl start antizapret-vpn
-sleep 10
+sleep 20
 machinectl copy-from antizapret-vpn /root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn /root/antizapret-client-tcp.ovpn
 ```
 
