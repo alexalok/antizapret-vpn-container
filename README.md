@@ -28,6 +28,7 @@ AntiZapret VPN Container
 lxc image import https://antizapret.prostovpn.org/container-images/az-vpn --alias antizapret-vpn-img
 lxc init antizapret-vpn-img antizapret-vpn
 lxc config device add antizapret-vpn proxy_1194 proxy listen=tcp:[::]:1194 connect=tcp:127.0.0.1:1194
+lxc config device add antizapret-vpn proxy_1194_udp proxy listen=udp:[::]:1194 connect=udp:127.0.0.1:1194
 lxc start antizapret-vpn
 sleep 10
 lxc file pull antizapret-vpn/root/easy-rsa-ipsec/CLIENT_KEY/antizapret-client-tcp.ovpn antizapret-client-tcp.ovpn
