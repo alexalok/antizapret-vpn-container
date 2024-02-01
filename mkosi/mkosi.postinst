@@ -16,7 +16,7 @@ apt update
 apt -o Dpkg::Options::="--force-confold" -y full-upgrade
 
 cd /root
-git clone https://bitbucket.org/anticensority/antizapret-pac-generator-light.git antizapret
+git clone https://github.com/alexalok/antizapret-pac-generator-light.git antizapret
 mv -f antizapret-process.sh antizapret/process.sh
 
 
