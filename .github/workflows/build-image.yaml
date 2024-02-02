@@ -1,0 +1,16 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mkosi
+        run: sudo apt-get install mkosi -y
+      - name: Build image
+        run: sudo -E ./build.sh
+        working-directory: ./mkosi
+
+      
+  
