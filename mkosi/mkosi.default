@@ -11,9 +11,7 @@ Output=rootfs.tar.xz
 
 [Validation]
 CheckSum=true
-Sign=true
-# ProstoVPN PGP key ID
-Key=7135A006B28E1285
+Sign=false
 
 [Packages]
 WithNetwork=true
